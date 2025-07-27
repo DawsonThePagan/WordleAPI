@@ -1,0 +1,170 @@
+<html>
+
+<head>
+    <title>Wordle Game</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .good {
+            background-color: green !important;
+            color: black !important;
+        }
+
+        .wrong_place {
+            background-color: yellow !important;
+            color: black !important;
+        }
+
+        .row > div {
+            align-items: center;
+            justify-content: center;
+            color: gray;
+            padding: 1%;
+            margin: 0.5%;
+            width: 3vw;
+            height: 3vw;
+            border-radius: 20%;
+            background-color: gray;
+        }
+
+        .row {
+            width: 50%;
+            margin: 0%;
+            height: 10%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header {
+            width: 70%;
+            margin: 0 auto;
+            text-align: center;
+            display: flex;
+        }
+
+        .header > div {
+            width: 50%;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <h1>Wordle Game</h1>
+        <a href="about.html">About</a>
+        <p id="guess">0/6</p>
+        <div class="container">
+            <div class="row">
+                <div id="line1-letter1" class="">.</div>
+                <div id="line1-letter2" class="">.</div>
+                <div id="line1-letter3" class="">.</div>
+                <div id="line1-letter4" class="">.</div>
+                <div id="line1-letter5" class="">.</div>
+            </div>
+            <br />
+            <div class="row">
+                <div id="line2-letter1" class="">.</div>
+                <div id="line2-letter2" class="">.</div>
+                <div id="line2-letter3" class="">.</div>
+                <div id="line2-letter4" class="">.</div>
+                <div id="line2-letter5" class="">.</div>
+            </div>
+            <br />
+            <div class="row">
+                <div id="line3-letter1" class="">.</div>
+                <div id="line3-letter2" class="">.</div>
+                <div id="line3-letter3" class="">.</div>
+                <div id="line3-letter4" class="">.</div>
+                <div id="line3-letter5" class="">.</div>
+            </div>
+            <br />
+            <div class="row">
+                <div id="line4-letter1" class="">.</div>
+                <div id="line4-letter2" class="">.</div>
+                <div id="line4-letter3" class="">.</div>
+                <div id="line4-letter4" class="">.</div>
+                <div id="line4-letter5" class="">.</div>
+            </div>
+            <br />
+            <div class="row">
+                <div id="line5-letter1" class="">.</div>
+                <div id="line5-letter2" class="">.</div>
+                <div id="line5-letter3" class="">.</div>
+                <div id="line5-letter4" class="">.</div>
+                <div id="line5-letter5" class="">.</div>
+            </div>
+            <br />
+            <div class="row">
+                <div id="line6-letter1" class="">.</div>
+                <div id="line6-letter2" class="">.</div>
+                <div id="line6-letter3" class="">.</div>
+                <div id="line6-letter4" class="">.</div>
+                <div id="line6-letter5" class="">.</div>
+            </div>
+        </div>
+        <input type="text" id="wordInput" placeholder="Enter your guess" maxlength="5">
+        <button id="submitGuess">Submit Guess</button>
+    </center>
+</body>
+
+<script>
+    var guesses = 0;
+    var maxGuesses = 6;
+
+    document.getElementById('submitGuess').addEventListener('click', async () => {
+        const wordInput = document.getElementById('wordInput').value;
+        const response = await fetch(`check/${wordInput}`);
+        const result = await response.json();
+        console.log("Response from server:", result);
+        var json = JSON.parse(result);
+
+        if (json["Error"] != "0") {
+            console.log("Error in response:", json["Error"]);
+            if(json["Error"] == "1")
+            {
+                alert("Word not found. Please try again.");
+            }
+            if(json["Error"] == "2"){
+                alert("System error. Please try again later.");
+            }
+            return;
+        }
+
+        const line = `line${guesses + 1}`;
+
+        var rightLetters = 0;
+
+        for (let i = 1; i <= 5; i++) {
+            if (json[`L${i}`] == 0) {
+                document.getElementById(`${line}-letter${i}`).innerText = document.getElementById('wordInput').value[i - 1].toUpperCase();
+            }
+            if (json[`L${i}`] == 1) {
+                document.getElementById(`${line}-letter${i}`).classList.add("wrong_place");
+                document.getElementById(`${line}-letter${i}`).innerText = document.getElementById('wordInput').value[i - 1].toUpperCase();
+            }
+            if (json[`L${i}`] == 2) {
+                rightLetters++;
+                document.getElementById(`${line}-letter${i}`).classList.add("good");
+                document.getElementById(`${line}-letter${i}`).innerText = document.getElementById('wordInput').value[i - 1].toUpperCase();
+            }
+        }
+
+        guesses++;
+        document.getElementById('guess').innerText = `${guesses}/${maxGuesses}`;
+
+        document.getElementById('wordInput').value = '';
+
+        if (rightLetters == 5) {
+            alert("Congratulations! You've guessed the word!");
+            document.getElementById('submitGuess').disabled = true;
+        }
+        else if (guesses >= maxGuesses) {
+            alert("Game Over! You've used all your guesses.");
+            document.getElementById('submitGuess').disabled = true;
+        }
+    });
+</script>
+
+</html>
