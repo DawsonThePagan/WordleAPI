@@ -129,7 +129,7 @@ async fn check_word(Path(word): Path<String>) -> Json<String> {
         return Json("{\"Error\":\"0\",\"L1\":2,\"L2\":2,\"L3\":2,\"L4\":2,\"L5\":2}".to_string());
     }
 
-    let mut result = String::from("{\"Error\":\"2\",");
+    let mut result = String::from("{\"Error\":\"0\",");
     let answer_chars: Vec<char> = answer.chars().collect();
     for (i, c) in word.chars().enumerate() {
         if c == answer_chars[i] {

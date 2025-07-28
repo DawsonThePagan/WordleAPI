@@ -15,6 +15,10 @@
             color: black !important;
         }
 
+        .filled {
+            color: white !important;
+        }
+
         .row > div {
             align-items: center;
             justify-content: center;
@@ -138,6 +142,7 @@
 
         for (let i = 1; i <= 5; i++) {
             if (json[`L${i}`] == 0) {
+            document.getElementById(`${line}-letter${i}`).classList.add("filled");
                 document.getElementById(`${line}-letter${i}`).innerText = document.getElementById('wordInput').value[i - 1].toUpperCase();
             }
             if (json[`L${i}`] == 1) {
